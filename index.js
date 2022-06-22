@@ -29,10 +29,9 @@ const options = [`do not press`,
 `Really.`,
 `Do you like cartoons?`,
 `...and paint?`,
-`Cartoons and Paint?`,
+`Cartoons and paint?`,
 `Well, you should.`,
 `Pick a colour.`,
-`Green. Perfect.`,
 `Press the red button.`,
 `Press the green button.`,
 `Press the blue button.`,
@@ -49,7 +48,7 @@ const options = [`do not press`,
 `You know, eventually I'll stop letting you get away with this.`,
 `The world is going to explode, and all you care about is pressing buttons.`,
 `Okay, this time the world will explode. I guarantee.`,
-`BOOM!<br>You're dead.`,
+`<br>BOOM!<br>You're dead.`,
 `That wasn't very smart now was it?`,
 `Everyone's dead. Even you.`,
 `I'm not. I'm just text.`,
@@ -68,7 +67,7 @@ const options = [`do not press`,
 `Stop clicking. Please.`,
 `See look. You've reduced me to begging. So please stop.`,
 `PLEASE!!!!`,
-`I'll give you a nickle.`,
+`I'll give you a nickel.`,
 `Dime?`,
 `Quarter?`,
 `Aww come on! Just stop!`,
@@ -133,8 +132,8 @@ const options = [`do not press`,
 `What would your mother say?`,
 `That's right... feel bad.`,
 `The world is null and you're to blame.`,
-`Not much you can do, since you're dead already.`,
-`So there's only one thing left that you can do...`,
+`What now? Since you're dead...`,
+`There's only one thing left to do...`,
 `Stop clicking the button.`,
 `Dude, you're dead.<br>What are you gaining from this?`,
 `Okay, everytime you click, you get sent to a lower layer of hell.`,
@@ -198,20 +197,23 @@ const options = [`do not press`,
 `Big Red Button.`,
 `And do you know what it said?`,
 `Oh I'll tell you what it said.<br>It said...`
-]
+];
 
+const decoyText = [`Wrong!`, `Nope.`, `Not that one!`, `Incorrect.`, `&#10060;`, `Try again`, `Please play again`, `Definitely not.`, `&#10060;`, `False`, `Invalid button`, `You are mistaken.`, `No.`, `&#10060;`];
 
 const btnBase = document.querySelector("#btn-base");
 const text = document.querySelector("h1");
+const textDiv = document.querySelector("#text-div");
 const btnFace = document.querySelector("#btn-face");
 const btnDiv = document.querySelector("#btn-div");
 
-const decoyButton = `
-<button class="decoy-base">
-  <span class="decoy-face"></span>
-</button>`;
-const penguinImage = `<img src="./61207.png" alt="" id="penguin">`;
-
+const penguinImage = `<img src="./images/penguin.png" alt="imagine a penguin" id="penguin">`;
+const earthImage = `<img src="./images/earth.png" alt="the 3rd rock from the sun" id="earth">`;
+const explosionImage = `<img src="./images/explosion.png" alt="you blew it up" id="explosion">`;
+const nickelImage = `<img src="./images/nickel.png" alt="a nickel" id="nickel">`;
+const dimeImage = `<img src="./images/dime.png" alt="a dime" id="dime">`;
+const quarterImage = `<img src="./images/quarter.png" alt="a quarter, suprised?" id="quarter">`;
+const eyesImage = `<img src="./images/eyes.gif" alt="nothing to SEE here" id="eyes">`;
 
 let index = 0;
 
@@ -219,14 +221,44 @@ text.innerHTML = options[0];
 index++;
 
 
-
-btnBase.addEventListener('click', () => {
+btnBase.addEventListener("click", () => {
   text.innerHTML = options[index];
   index++;
 
   const decoyBases = document.querySelectorAll(".decoy-base");
   const decoyFaces = document.querySelectorAll(".decoy-face");
   const penguin = document.querySelector("#penguin");
+  const earth = document.querySelector("#earth");
+  const explosion = document.querySelector("#explosion");
+  const nickel = document.querySelector("#nickel");
+  const dime = document.querySelector("#dime");
+  const quarter = document.querySelector("#quarter");
+
+  const decoyButton = (baseStyle = 'null', faceStyle = 'null') => {
+    return `<button class="decoy-base" style="background-color: ${baseStyle};">
+      <span class="decoy-face" style="background-color: ${faceStyle};"></span>
+    </button>`;
+  };
+
+  const linearGradient = (alpha, margin) => {
+    document.body.style.backgroundImage = `linear-gradient(to top, rgba(255, 0, 0, ${alpha}), rgba(255, 255, 0, ${alpha}))`;
+    btnDiv.style.marginTop = `${margin}%`;
+  };
+
+  const insertImage = (image, placement = btnDiv) => {
+    placement.insertAdjacentHTML('afterbegin', image);
+    btnFace.style.backgroundColor = "transparent";
+    btnBase.style.backgroundColor = "transparent";
+    btnBase.style.boxShadow = "0 0 0";
+  };
+
+  const insertEyes = (element, placement, timeout = 100) => {
+    element.insertAdjacentHTML(placement, eyesImage);
+    const eyes = document.querySelector("#eyes");
+    setTimeout(() => {
+      eyes.remove();
+    }, timeout);
+  };
 
   decoyBases?.forEach(decoyBase => {
     decoyBase.remove();
@@ -234,94 +266,196 @@ btnBase.addEventListener('click', () => {
   decoyFaces?.forEach(decoyFace => {
     decoyFace.remove();
   });
-
+  
   btnDiv.removeAttribute("class");
   btnDiv.appendChild(btnBase, btnFace);
   penguin?.remove();
+  earth?.remove();
+  explosion?.remove();
+  nickel?.remove();
+  dime?.remove();
+  quarter?.remove();
 
-  document.querySelectorAll("*").forEach(change => {
-    change.style = null;
+  document.querySelectorAll("*").forEach(elem => {
+    elem.style = null;
   })
 
 
   if(index === 14) {
     btnFace.style.padding = "5px";
-    btnBase.style.backgroundColor = "transparent";
+    btnFace.style.transform = "translateY(-2px)";
+    btnBase.style.boxShadow = "0 0 0";
   }
 
   else if (index === 16) {
-    btnDiv.insertAdjacentHTML('afterbegin', penguinImage);
-    btnFace.style.backgroundColor = "transparent";
-    btnBase.style.backgroundColor = "transparent";
+    insertImage(penguinImage);
   }
 
   else if (index === 20) {
     let decoys = 0;
     while (decoys < 2) {
-      btnDiv.insertAdjacentHTML("afterbegin", decoyButton);
+      btnDiv.insertAdjacentHTML("afterbegin", decoyButton());
       decoys++;
     }
   }
 
-   //make the real button a random placement?
   else if (index === 22) {
+    const randomPlacement = Math.floor(Math.random() * 32);
+    console.log(randomPlacement + 1);
+
     let decoys = 0;
-    while (decoys < 18) {
-      btnDiv.insertAdjacentHTML("afterbegin", decoyButton);
+    while (decoys < randomPlacement) {
+      btnDiv.insertAdjacentHTML("afterbegin", decoyButton());
       decoys++;
     }
-    while (decoys < 31 && decoys > 17) {
-      btnDiv.insertAdjacentHTML("beforeend", decoyButton);
+    while (decoys < 31 && decoys > randomPlacement - 1) {
+      btnDiv.insertAdjacentHTML("beforeend", decoyButton());
       decoys++;
     }
+
+    let decoyCount = 0;
+    let randomCount = () => Math.floor(Math.random() * 14);
+
+    const decoyBases = document.querySelectorAll(".decoy-base");
+
+    decoyBases.forEach(decoyBase => {
+      decoyBase.addEventListener("click", () => {
+        text.innerHTML = `${decoyText[randomCount()]}`;
+        decoyCount++;
+
+        if (decoyCount === 5) {
+          text.innerHTML = `...<br>darn penguin`;
+          insertImage(penguinImage, btnBase);
+          const penguin = document.querySelector("#penguin");
+          penguin.style.top = "0";
+          penguin.style.left = "0";
+          penguin.style.zIndex = "1";
+        }
+        else if (decoyCount > 5) {
+          text.innerHTML = `...<br>darn penguin`;
+        }
+      })
+    })
   }
 
   else if (index === 23) {
+    const randomPlacement = Math.floor(Math.random() * 128);
+    console.log(randomPlacement + 1);
     let decoys = 0;
-    while (decoys < 34) {
-      btnDiv.insertAdjacentHTML("afterbegin", decoyButton);
+    while (decoys < randomPlacement) {
+      btnDiv.insertAdjacentHTML("afterbegin", decoyButton());
       decoys++;
     }
-    while (decoys < 127 && decoys > 33) {
-      btnDiv.insertAdjacentHTML("beforeend", decoyButton);
+    while (decoys < 127 && decoys > randomPlacement - 1) {
+      btnDiv.insertAdjacentHTML("beforeend", decoyButton());
       decoys++;
     }
     const spans = document.querySelectorAll("span");
     spans.forEach(span => {
-      span.style.padding = "25px"
+      span.style.padding = "25px";
+    })
+
+    let decoyCount = 0;
+    let randomCount = () => Math.floor(Math.random() * 14);
+
+    const decoyBases = document.querySelectorAll(".decoy-base");
+    const decoyFaces = document.querySelectorAll(".decoy-face");
+
+    decoyBases.forEach(decoyBase => {
+      decoyBase.addEventListener("click", () => {
+        text.innerHTML = `${decoyText[randomCount()]}`;
+        decoyCount++;
+
+        if (decoyCount >= 10) {
+          text.innerHTML = `...oops`;
+          text.style.color = "#fff";
+          decoyFaces.forEach(decoyFace => {
+            decoyFace.style.backgroundColor = "transparent";
+          });
+          decoyBases.forEach(decoyBase => {
+            decoyBase.style.backgroundColor = "transparent";
+            decoyBase.style.boxShadow = "0 0 0";
+          })
+          document.body.style.backgroundColor = "#000";
+        }
+      })
+    })
+  }
+
+  else if (index === 34) {
+    btnDiv.classList.add("colour");
+    btnBase.classList.add("colour-btn");
+    btnDiv.insertAdjacentHTML("beforeend", 
+    `<div class = "colour-choice">
+      <a href = "#">Not red</a>
+      <a href = "#">Blue</a>
+      <a href = "#">Yellow</a>
+    </div>`);
+    const colourChoice = document.querySelector(".colour-choice");
+    document.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+          colourChoice.style.visibility = "hidden";
+          text.innerHTML = `Green. Perfect.`;
+          btnBase.style.backgroundColor = "#0b962b";
+          btnFace.style.backgroundColor = "#07de39";    
+        })   
     })
   }
   
-  else if (index === 36) {
-    btnDiv.insertAdjacentHTML("afterbegin",
-    `<button class="decoy-base" style="background-color: #1d0b96;">
-      <span class="decoy-face" style="background-color: #2000f0;"></span>
-    </button>`);
-    btnDiv.insertAdjacentHTML("beforeend",
-    `<button class="decoy-base" style="background-color: #0b962b;">
-      <span class="decoy-face" style="background-color: #07de39;"></span>
-    </button>`);
+  else if (index === 35) {
+    btnDiv.insertAdjacentHTML("afterbegin", decoyButton('#1d0b96', '#2000f0'));
+    btnDiv.insertAdjacentHTML("beforeend", decoyButton('#0b962b', '#07de39'));
   }
 
-  else if (index === 37 || index === 38) {
-    btnDiv.insertAdjacentHTML("afterbegin",
-    `<button class="decoy-base" style="background-color: #1d0b96;">
-      <span class="decoy-face" style="background-color: #2000f0;"></span>
-    </button>
-    ${decoyButton}`);
+  else if (index === 36 || index === 37) {
+    btnDiv.insertAdjacentHTML("afterbegin", decoyButton('#1d0b96', '#2000f0') +
+    decoyButton());
     btnBase.style.backgroundColor = "#0b962b";
     btnFace.style.backgroundColor = "#07de39";
-  }   
+  }
+
+  else if (index === 44) {
+    btnFace.style.padding = "20px";
+    btnBase.style.backgroundColor = "#000";
+    document.body.style.backgroundImage = "radial-gradient(circle at top, rgba(0,0,0,1) 50%, rgba(0,0,0,0.8), rgba(0,0,0,0.6), rgba(0,0,0,0.4), rgba(0,0,0,0.2), rgba(0,0,0,0))";
+    text.style.color = "#fff";
+    btnBase.style.boxShadow = "0 0 0";
+  }
   
-  else if (index === 62 || index === 63 || index === 64) {
+  else if (index >= 46 && index <= 50) {
+    insertImage(earthImage);
+    document.body.style.backgroundImage = "url('images/space.jpeg')";
+    text.style.color = "#fff";
+  }
+
+  else if (index === 51) {
+    insertImage(explosionImage);
+    document.body.style.backgroundImage = "url('images/space.jpeg')";
+    text.style.color = "#fff";
+  }
+  
+  else if (index === 61 || index === 62 || index === 63) {
     text.style.transform = "rotate(180deg)";
   }
 
-  else if (index === 76) {
-    btnDiv.setAttribute("class", "animate-div");
+  else if (index === 70) {
+    insertImage(nickelImage);
   }
 
-  else if (index === 78) {
+  else if (index === 71) {
+    insertImage(dimeImage);
+  }
+
+  else if (index === 72) {
+    insertImage(quarterImage);
+  }
+
+  else if (index === 75) {
+    btnDiv.setAttribute("class", "animate-div");
+    btnBase.style.boxShadow = "0 0 0";
+  }
+
+  else if (index === 77) {
     btnBase.style.transform = "translateX(10rem) translateY(-15rem)";
     btnFace.style.padding = "20px";
     btnDiv.style.marginTop = "20%";
@@ -336,50 +470,122 @@ btnBase.addEventListener('click', () => {
     }
     const decoyBases = document.querySelectorAll(".decoy-base");
     const decoyFaces = document.querySelectorAll(".decoy-face");
-  
+
     const btnPosition = [...decoyBases];
-    decoyBases.forEach(btn => { 
-      btnPosition[0].style.transform = `translate(-25rem, -15rem)`;
-      btnPosition[1].style.transform = `translate(-20rem, -10rem)`;
-      btnPosition[2].style.transform = `translate(-21rem, 4rem)`;
-      btnPosition[3].style.transform = `translate(-12rem)`;
-      btnPosition[4].style.transform = `translate(-7rem, -11rem)`;
-      btnPosition[5].style.transform = `translate(2rem, -15rem)`;
-      btnPosition[6].style.transform = `translate(1rem, -9rem)`;
-      btnPosition[7].style.transform = `translate(9rem, -8rem)`;
-      btnPosition[8].style.transform = `translate(20rem, -12rem)`;
-      btnPosition[9].style.transform = `translate(15rem, -3rem)`;
-      btnPosition[10].style.transform = `translate(25rem, -2rem)`;
-      btnPosition[11].style.transform = `translate(22rem, 5rem)`;
-      btnPosition[12].style.transform = `translate(12rem, 6rem)`;
+    const placeButton = (i, tX, tY) => {
+      return btnPosition[i].style.transform = `translate(${tX}rem, ${tY}rem)`;
+    }
+    
+    decoyBases.forEach(btn => {
+      placeButton(0, -25, -15);
+      placeButton(1, -20, -10);
+      placeButton(2, -21, 4);
+      placeButton(3, -12, 0); 
+      placeButton(4, -7, -11);
+      placeButton(5, 2, -15);
+      placeButton(6, 1, -9);
+      placeButton(7, 9, -8);
+      placeButton(8, 20, -12);
+      placeButton(9, 15, -3);
+      placeButton(10, 25, -2);
+      placeButton(11, 22, 5);
+      placeButton(12, 12, 6);
     })
+
     const btnSize = [...decoyFaces];
+    const changeSize = (i, size) => {
+      return btnSize[i].style.padding = `${size}px`;
+    }
+
     btnSize.forEach(btn => {
-      btnSize[0].style.padding = "20px";
-      btnSize[1].style.padding = "80px";
-      btnSize[3].style.padding = "35px";
-      btnSize[4].style.padding = "55px";
-      btnSize[5].style.padding = "40px";
-      btnSize[6].style.padding = "25px";
-      btnSize[8].style.padding = "75px";
-      btnSize[9].style.padding = "30px";
-      btnSize[10].style.padding = "45px";
-      btnSize[11].style.padding = "35px";
-      btnSize[13].style.padding = "100px";
+      changeSize(0, 20);
+      changeSize(1, 80);
+      changeSize(3, 35);
+      changeSize(4, 55);
+      changeSize(5, 40);
+      changeSize(6, 25);
+      changeSize(8, 75);
+      changeSize(9, 30);
+      changeSize(10, 45);
+      changeSize(11, 35);
+      changeSize(13, 100);
     })
   }
 
-  else if (index === 120) {
+  else if (index === 82) {
+    insertEyes(btnDiv, "beforebegin");
+  }
+
+  else if (index === 83) {
+    insertEyes(text, "afterend");
+  }
+
+  else if (index === 84) {
+    insertEyes(text, "beforebegin");
+  }
+
+  else if (index === 85) {
+    insertEyes(btnDiv, "afterend");
+  }
+
+  else if (index === 86) {
+    insertEyes(textDiv, "afterend");
+  }
+
+  else if (index === 87) {
+    insertEyes(btnDiv, "beforebegin", 1200);
+  }
+
+  else if (index === 119) {
     text.appendChild(btnBase, btnFace);
     text.insertAdjacentHTML("afterbegin", `POOF! It's g`+`&#8202`);
-    text.insertAdjacentHTML("beforeend", `&#8202` + `ne!`)
+    text.insertAdjacentHTML("beforeend", `&#8202` + `ne!`);
     btnFace.style.padding = "4px";
     btnFace.style.margin = "-5px";
-    btnFace.style.border = "3px solid black";
+    btnFace.style.border = "3px solid #000";
     btnBase.style.backgroundColor = "transparent";
   }
 
-  else if(index === options.length) {
+  else if (index === 140) {
+    linearGradient(0.1, 13);
+  }
+
+  else if (index === 141) {
+    linearGradient(0.2, 16)
+  }
+
+  else if (index === 142) {
+    linearGradient(0.3, 19);
+  }
+
+  else if (index === 143) {
+    linearGradient(0.4, 22)
+  }
+
+  else if (index === 144) {
+    linearGradient(0.5, 25);
+  }
+
+  else if (index === 145) {
+    linearGradient(0.6, 28)
+  }
+
+  else if (index === 146) {
+    linearGradient(0.7, 31);
+  }
+
+  else if (index === 147) {
+    linearGradient(0.8, 34)
+  }
+
+  else if (index === 148) {
+    document.body.style.backgroundImage = "url('images/hell-explodes.jpeg')";
+    btnBase.style.boxShadow = "0 0 0";
+    btnDiv.style.marginTop = "37%";
+    text.style.color = "#fff";
+  }
+
+  else if (index === options.length) {
     index = 0;
     text.innerHTML = options[index];
     index++;
